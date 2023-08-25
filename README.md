@@ -1,74 +1,88 @@
 # Secure Authentication System (SAS)
 
-The **Secure Authentication System (SAS)** is a sample application that demonstrates the implementation of a secure authentication system using the Flask framework in Python. SAS allows users to register, log in, and access restricted areas of the application, all with a focus on data security.
+Welcome to the Secure Authentication System (SAS), a secure authentication system developed in Python using the Flask framework. SAS allows users to sign up, log in, and maintain their accounts securely with strict password requirements.
 
-## Features
+## Prerequisites
 
-- **User Registration**: Users can create an account in the application by providing a username and a secure password.
+Make sure you have the following requirements installed before you begin:
 
-- **User Authentication**: Users can log in using their registered credentials, with their passwords protected by hash and salt.
+- Python 3.9
+- MariaDB (or MySQL)
+- The Python libraries listed in requirements.txt
 
-- **Password Validation**: Passwords must meet specific security criteria, ensuring robustness against threats.
+## Database Configuration
 
-- **Web Interface**: The application presents web pages for registration, login, and access to restricted areas, providing a user-friendly experience.
+Before starting the application, you should set up the MariaDB database and create a database named "SAS." You can do this using the following SQL:
 
-## Technologies Used
+```sql
+CREATE DATABASE SAS;
+```
 
-The project utilizes the following technologies:
+Additionally, you need to configure the database user and password in the auth.py file:
 
-- **Python**: The primary programming language.
-
-- **Flask**: The web framework powering the application.
-
-- **MariaDB**: The relational database for storing user information.
-
-- **Bcrypt**: For password security through hashing.
-
-- **HTML**: For creating web pages.
+```python
+conn = mariadb.connect(
+    user='YOUR_USER',
+    password='YOUR_PASSWORD',
+    host='localhost',
+    database='SAS'
+)
+```
 
 ## Installation
 
-To run SAS in your local environment, follow these steps:
+1. Clone the SAS repository to your local machine:
 
-1. **Clone the Repository**: Clone this repository to your local environment.
+```bash
+git clone https://github.com/eduardo45MP/SAS.git
+cd SAS
+```
 
-   ```bash
-   git clone https://github.com/your-username/sas.git
-   cd sas
-   ```
+2. Install the Python dependencies listed in the requirements.txt file:
 
-2. **Create a Virtual Environment**: Create a virtual environment to isolate the project's dependencies.
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+## Running the Application
 
-3. **Install Dependencies**: Install the project's dependencies.
+After configuring the database and installing the dependencies, you can start the Flask application:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python run.py
+```
 
-4. **Configure the Database**: Configure the MariaDB database as needed in the `app/auth.py` file.
+The application will be available at [http://localhost:5000/](http://localhost:5000/) in your web browser.
 
-5. **Start the Application**: Start the application.
+## Features
 
-   ```bash
-   python run.py
-   ```
+SAS offers the following features:
 
-6. **Access the Application**: Access the application in your web browser at [http://localhost:5000](http://localhost:5000).
+- User registration with password validation:
+  - Password must be at least 8 characters long.
+  - Must contain at least one special character (!@#$%^&*(),.?-_":{}|<>).
+  - Must contain at least one uppercase letter.
+  - Must contain at least one numeric digit.
+- Account locking after a defined number of failed login attempts.
+- Recovery of locked accounts after a specified time period.
 
-## Usage Examples
+## Project Structure
 
-- **User Registration**: Access the registration page, provide a username, and a password that meets the security criteria, then click "Register."
+The project is structured as follows:
 
-- **User Login**: Use the registered username and password to log in on the login page.
+- `app`: Contains the main Flask application code.
+  - `templates`: Stores the HTML templates used by the application.
+  - `auth.py`: Handles authentication and user management.
+  - `__init__.py`: Initializes the Flask application.
+  - `name_tk.py`: Checks the availability of usernames.
+  - `routes.py`: Defines the application's routes and handles business logic.
+  - `valid_pw.py`: Checks the validity of user passwords.
+- `__pycache__`: Contains automatically generated Python files.
+- `README.md`: This file you are reading.
 
-## Contributing
+## Contribution
 
-Contributions are welcome! Feel free to submit pull requests or report issues.
+Feel free to contribute improvements to SAS. You can open issues or submit pull requests with your contributions.
 
 ## License
 
@@ -81,75 +95,93 @@ If you have any questions or need assistance, please feel free to contact us via
 #pt-br
 # Secure Authentication System (SAS)
 
-O **Sistema de Autenticação Segura (SAS)** é um aplicativo de exemplo que demonstra a implementação de um sistema de autenticação seguro usando a estrutura Flask em Python. O SAS permite que os usuários se registrem, façam login e acessem áreas restritas do aplicativo, tudo isso com foco na segurança de dados.
+Bem-vindo ao Secure Authentication System (SAS), um sistema de autenticação seguro desenvolvido em Python usando o framework Flask. O SAS permite que os usuários se cadastrem, façam login e mantenham suas contas seguras com requisitos rigorosos de senha.
 
-## Recursos
+## Pré-requisitos
 
-- **Registro de Usuário**: Os usuários podem criar uma conta no aplicativo fornecendo um nome de usuário e senha segura.
+Certifique-se de ter os seguintes requisitos instalados antes de começar:
 
-- **Autenticação de Usuário**: Os usuários podem fazer login usando suas credenciais cadastradas, com suas senhas protegidas por hash e salt.
+- Python 3.9
+- MariaDB (ou MySQL)
+- As bibliotecas Python listadas em requirements.txt
 
-- **Validação de Senha**: Senhas devem atender a critérios específicos de segurança, garantindo robustez contra ameaças.
+## Configuração do Banco de Dados
 
-- **Interface Web**: O aplicativo apresenta páginas web para registro, login e acesso a áreas restritas, oferecendo uma experiência amigável.
+Antes de iniciar o aplicativo, você deve configurar o banco de dados MariaDB e criar um banco de dados chamado "SAS". Para fazer isso, você pode usar o seguinte SQL:
 
-## Tecnologias Utilizadas
+```sql
+CREATE DATABASE SAS;
+```
 
-O projeto utiliza as seguintes tecnologias:
+Além disso, você precisa configurar o usuário e a senha do banco de dados no arquivo auth.py:
 
-- **Python**: A linguagem de programação principal.
-- **Flask**: O framework web que impulsiona o aplicativo.
-- **MariaDB**: O banco de dados relacional para armazenar informações de usuários.
-- **Bcrypt**: Para a segurança das senhas através do hash.
-- **HTML**: Para a criação das páginas web.
+```python
+conn = mariadb.connect(
+    user='SEU_USUARIO',
+    password='SUA_SENHA',
+    host='localhost',
+    database='SAS'
+)
+```
 
 ## Instalação
 
-Para executar o SAS em seu ambiente local, siga estas etapas:
+1. Clone o repositório do SAS em sua máquina local:
 
-1. **Clone o Repositório**: Clone este repositório para o seu ambiente local.
+```bash
+git clone https://github.com/eduardo45MP/SAS.git
+cd SAS
+```
 
-   ```bash
-   git clone https://github.com/seu-usuario/sas.git
-   cd sas
-   ```
+2. Instale as dependências do Python listadas no arquivo requirements.txt:
 
-2. **Crie um Ambiente Virtual**: Crie um ambiente virtual para isolar as dependências do projeto.
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # No Windows: venv\Scripts\activate
-   ```
+## Executando o Aplicativo
 
-3. **Instale as Dependências**: Instale as dependências do projeto.
+Após configurar o banco de dados e instalar as dependências, você pode iniciar o aplicativo Flask:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python run.py
+```
 
-4. **Configure o Banco de Dados**: Configure o banco de dados MariaDB conforme necessário no arquivo `app/auth.py`.
+O aplicativo estará disponível em [http://localhost:5000/](http://localhost:5000/) em seu navegador.
 
-5. **Inicie o Aplicativo**: Inicie o aplicativo.
+## Funcionalidades
 
-   ```bash
-   python run.py
-   ```
+O SAS oferece as seguintes funcionalidades:
 
-6. **Acesse o Aplicativo**: Acesse o aplicativo em seu navegador em [http://localhost:5000](http://localhost:5000).
+- Cadastro de usuário com validação de senha:
+  - A senha deve ter pelo menos 8 caracteres.
+  - Deve conter pelo menos um caractere especial (!@#$%^&*(),.?-_":{}|<>).
+  - Deve conter pelo menos uma letra maiúscula.
+  - Deve conter pelo menos um dígito numérico.
+- Bloqueio de conta após um número definido de tentativas de login malsucedidas.
+- Recuperação de conta bloqueada após um período de tempo.
 
-## Exemplos de Uso
+## Estrutura do Projeto
 
-- **Registro de Usuário**: Acesse a página de registro, forneça um nome de usuário e uma senha que atenda aos critérios de segurança e clique em "Registrar".
+O projeto está estruturado da seguinte forma:
 
-- **Login de Usuário**: Use o nome de usuário e a senha cadastrados para fazer login na página de login.
+- `app`: Contém o código principal do aplicativo Flask.
+  - `templates`: Armazena os modelos HTML usados pelo aplicativo.
+  - `auth.py`: Lida com a autenticação e o gerenciamento de usuários.
+  - `__init__.py`: Inicializa o aplicativo Flask.
+  - `name_tk.py`: Verifica a disponibilidade de nomes de usuário.
+  - `routes.py`: Define as rotas do aplicativo e lida com a lógica de negócios.
+  - `valid_pw.py`: Verifica a validade das senhas dos usuários.
+- `__pycache__`: Contém arquivos gerados automaticamente pelo Python.
+- `README.md`: Este arquivo que você está lendo.
 
-## Contribuindo
+## Contribuição
 
-Contribuições são bem-vindas! Sinta-se à vontade para enviar pull requests ou relatar problemas.
+Sinta-se à vontade para contribuir com melhorias para o SAS. Você pode abrir problemas (issues) ou enviar solicitações de pull (pull requests) com suas contribuições.
 
 ## Licença
 
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
+Este projeto é distribuído sob a licença MIT.
 
 ## Contato
 
