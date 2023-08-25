@@ -7,3 +7,4 @@ app = Flask(__name__)
 # Import the 'routes' module from the 'app' package
 from app import routes
 
+app.secret_key = '@secretKey123'

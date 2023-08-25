@@ -4,9 +4,11 @@ from app.name_tk import is_username_taken
 from app.valid_pw import is_valid_password
 from app import app, auth
 import bcrypt
-from app import app
-from app.auth import create_user, get_user, check_login_attempts
 from datetime import datetime, timedelta
+
+# Define global constants
+MAX_LOGIN_ATTEMPTS = 3
+LOCKOUT_DURATION = 60  # In seconds
 
 # Define a route for the root URL
 @app.route('/')
@@ -34,32 +36,31 @@ def signup():
             return "Username already exists."
     return render_template('signup.html')
 
+# Define a function to lock an account
 def lock_account(user):
-    LOCKOUT_DURATION = 60
-    MAX_LOGIN_ATTEMPTS = 3
-    user.login_attempts = MAX_LOGIN_ATTEMPTS + 1  # Bloqueie a conta
-    locked_until = datetime.now() + timedelta(seconds=LOCKOUT_DURATION)  # Configure o tempo de bloqueio
+    user.login_attempts = MAX_LOGIN_ATTEMPTS + 1  # Lock the account
+    locked_until = datetime.now() + timedelta(seconds=LOCKOUT_DURATION)  # Set the lockout time
     
-    # Atualize a coluna locked_until no banco de dados com o valor de timestamp
+    # Update the 'locked_until' column in the database with the timestamp value
     auth.cursor.execute('UPDATE users SET locked_until = ? WHERE username = ?', (locked_until, user.username))
     auth.conn.commit()
     
-    return "Conta bloqueada devido a muitas tentativas malsucedidas. Tente novamente mais tarde."
+    return "Account locked due to too many unsuccessful attempts. Please try again later."
 
-# Define a função para verificar se a conta está bloqueada
+# Define a function to check if an account is locked
 def is_account_locked(user):
-    if user.login_attempts > MAX_LOGIN_ATTEMPTS and user.locked_until > int(time.time()):
+    if user.login_attempts > MAX_LOGIN_ATTEMPTS and user.locked_until > datetime.now():
         return True
     
-    # Verifique também a coluna locked_until no banco de dados
+    # Also check the 'locked_until' column in the database
     auth.cursor.execute('SELECT locked_until FROM users WHERE username = ?', (user.username,))
     result = auth.cursor.fetchone()
-    if result and result[0] > int(time.time()):
+    if result is not None and result[0] is not None and result[0] > datetime.now():
         return True
     
     return False
 
-# Define a rota de login
+# Define the login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -68,37 +69,37 @@ def login():
         user = auth.get_user(username)
 
         if user:
-            MAX_LOGIN_ATTEMPTS = 3
             login_attempts = user.login_attempts
             
-            # Verifique se a conta está bloqueada
-            if login_attempts >= MAX_LOGIN_ATTEMPTS:
-                return "Conta bloqueada devido a muitas tentativas malsucedidas. Tente novamente mais tarde."
+            # Check if the account is locked
+            if is_account_locked(user):
+                return "Account locked due to too many unsuccessful attempts. Please try again later."
 
-            # Verifique a senha
+            # Check the password
             if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                # Redefina o contador de tentativas de login após um login bem-sucedido
+                # Reset the login attempts counter after a successful login
                 user.login_attempts = 0
 
-                # Atualize o valor no banco de dados
+                # Update the value in the database
                 auth.cursor.execute('UPDATE users SET login_attempts = 0 WHERE username = ?', (username,))
                 auth.conn.commit()
 
-                return "Login bem-sucedido!"
+                return "Login successful!"
             else:
-                # Incremente o contador de tentativas de login malsucedidas
+                # Increment the unsuccessful login attempts counter
                 login_attempts += 1
-                # Atualize o valor no banco de dados
+
+                # Update the value in the database
                 auth.cursor.execute('UPDATE users SET login_attempts = ? WHERE username = ?', (login_attempts, username))
                 auth.conn.commit()
 
-                # Verifique se o usuário atingiu o limite máximo de tentativas
+                # Check if the user has reached the maximum login attempts limit
                 if login_attempts >= MAX_LOGIN_ATTEMPTS:
                     lock_account(user)
-                    return "Conta bloqueada devido a muitas tentativas malsucedidas. Tente novamente mais tarde."
+                    return "Account locked due to too many unsuccessful attempts. Please try again later."
 
-                return "Senha incorreta. Tentativas restantes: {}".format(MAX_LOGIN_ATTEMPTS - login_attempts)
+                return "Incorrect username or password."
         else:
-            return "Usuário não encontrado."
+            return "Incorrect username or password."
 
     return render_template('login.html')
